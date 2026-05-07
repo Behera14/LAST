@@ -1,0 +1,187 @@
+🌟 1. What is this Assignment About?
+📌 Title:
+
+Implement Min, Max, Sum and Average using Parallel Reduction
+
+📌 Objective:
+
+To use OpenMP parallel reduction to perform operations on an array efficiently.
+
+🧠 2. What is Parallel Reduction?
+
+👉 Normally (sequential):
+You loop through an array one by one.
+
+👉 In Parallel Reduction:
+
+Work is divided among multiple threads
+Each thread computes a partial result
+All results are combined automatically
+🔥 Example (Sum):
+
+Instead of:
+
+sum = a + b + c + d
+
+Parallel:
+
+Thread1 → a + b
+Thread2 → c + d
+Final → combine → total sum
+⚙️ 3. What is OpenMP?
+
+👉 OpenMP (Open Multi-Processing) is a library used in C/C++ for parallel programming.
+
+You enable it using:
+
+g++ filename.cpp -fopenmp -o output
+🧾 4. Code Explanation (Line by Line)
+🔹 Header Files
+#include <iostream>
+#include <omp.h>
+#include <climits>
+iostream → for input/output
+omp.h → for OpenMP functions
+climits → for INT_MAX, INT_MIN
+🔵 5. MIN REDUCTION
+void min_reduction(int arr[], int n) {
+  int min_value = INT_MAX;
+
+👉 Start with maximum possible value
+
+#pragma omp parallel for reduction(min: min_value)
+
+👉 Key line:
+
+parallel for → loop runs in parallel
+reduction(min: min_value) → OpenMP finds minimum safely
+for (int i = 0; i < n; i++) {
+    if (arr[i] < min_value) {
+        min_value = arr[i];
+    }
+}
+
+👉 Each thread checks minimum
+
+cout << "Minimum value: " << min_value << endl;
+🔴 6. MAX REDUCTION
+int max_value = INT_MIN;
+
+👉 Start with smallest possible value
+
+#pragma omp parallel for reduction(max: max_value)
+
+👉 OpenMP finds maximum automatically
+
+🟢 7. SUM REDUCTION
+int sum = 0;
+#pragma omp parallel for reduction(+: sum)
+
+👉 + means addition reduction
+
+sum += arr[i];
+
+👉 Each thread adds its part
+
+🟡 8. AVERAGE REDUCTION
+int sum = 0;
+#pragma omp parallel for reduction(+: sum)
+
+👉 First calculate sum
+
+cout << "Average: " << (double)sum / (n-1) << endl;
+
+❌ Mistake here!
+
+👉 It should be:
+
+(double)sum / n
+
+✅ Correct formula:
+
+Average = Sum / Number of elements
+⚠️ 9. Important Error in Your Code
+❌ Wrong:
+(n - 1)
+✅ Correct:
+n
+🧩 10. MAIN FUNCTION
+int *arr, n;
+cin >> n;
+arr = new int[n];
+
+👉 Dynamic array creation
+
+for(int i=0;i<n;i++)
+    cin>>arr[i];
+
+👉 Input values
+
+min_reduction(arr, n);
+max_reduction(arr, n);
+sum_reduction(arr, n);
+average_reduction(arr, n);
+
+👉 Calling all functions
+
+🚀 11. Why Parallel Reduction is Useful?
+
+✅ Faster execution
+✅ Efficient CPU usage
+✅ Avoids race condition
+✅ Cleaner code
+
+⚡ 12. Important Viva Questions (VERY IMPORTANT)
+❓ Q1: What is reduction in OpenMP?
+
+👉 Reduction combines results from multiple threads into one variable.
+
+❓ Q2: Why use reduction instead of normal variables?
+
+👉 To avoid race conditions (multiple threads modifying same variable).
+
+❓ Q3: What is race condition?
+
+👉 When multiple threads access and modify same variable at same time → wrong output.
+
+❓ Q4: What are reduction operators?
+
+👉 Examples:
+
++ → sum
+min → minimum
+max → maximum
+* → multiplication
+❓ Q5: Why INT_MAX in min?
+
+👉 To ensure any number in array will be smaller.
+
+❓ Q6: Difference between sequential and parallel?
+Sequential	Parallel
+One thread	Multiple threads
+Slow	Fast
+Simple	Efficient
+❓ Q7: What is OpenMP directive?
+
+👉 Special instruction starting with #pragma omp
+
+❓ Q8: How to compile OpenMP program?
+g++ program.cpp -fopenmp -o output
+🎯 13. Final Correct Average Function
+void average_reduction(int arr[], int n) {
+  int sum = 0;
+  #pragma omp parallel for reduction(+: sum)
+  for (int i = 0; i < n; i++) {
+    sum += arr[i];
+  }
+  cout << "Average: " << (double)sum / n << endl;
+}
+💡 14. Simple Real-Life Understanding
+
+Imagine:
+
+You and 4 friends are counting money
+Each counts a portion
+Then combine results
+
+👉 That’s parallel reduction
